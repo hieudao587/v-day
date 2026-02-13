@@ -10,15 +10,15 @@ const gifStages = [
 ]
 
 const noMessages = [
-    "Không",
+    "No",
     "Em chắc chưa? 🤔",
-    "Làm ơn đừng mà... 🥺",
-    "Nếu em nói không, anh sẽ rất buồn đấy...",
-    "Anh sẽ rất buồn thật đấy... 😢",
+    "Đừng mà... 🥺",
+    "Nếu em nói không, anh sẽ buồn lắm đấy...",
+    "Anh sẽ rất là buồn... 😢",
     "Please??? 💔",
-    "Đừng làm thế mà...",
-    "Này là lần cuối...😭",
-    "Đố em bắt được anh 😜"
+    "Đừng mà...",
+    "Này là lần cuối đ.... 😭",
+    "Đố em bắt được anh, ờ... 😜"
 ]
 
 const yesTeasePokes = [
@@ -33,7 +33,6 @@ let yesTeasedCount = 0
 let noClickCount = 0
 let runawayEnabled = false
 let musicPlaying = true
-let clickHistory = []   // ✅ thêm dòng này
 
 const catGif = document.getElementById('cat-gif')
 const yesBtn = document.getElementById('yes-btn')
@@ -71,22 +70,11 @@ function handleYesClick() {
         // Tease her to try No first
         const msg = yesTeasePokes[Math.min(yesTeasedCount, yesTeasePokes.length - 1)]
         yesTeasedCount++
-        clickHistory.push("Yes (tease)") // ✅ thêm
         showTeaseMessage(msg)
         return
     }
-
-    clickHistory.push("Yes (final)") // ✅ thêm
-
-    sendEmailReport()
-        .catch(() => {
-            // gửi fail vẫn cho qua để không phá mood
-        })
-        .finally(() => {
-            window.location.href = 'yes.html'
-        })
+    window.location.href = 'yes.html'
 }
-
 
 function showTeaseMessage(msg) {
     let toast = document.getElementById('tease-toast')
@@ -98,7 +86,6 @@ function showTeaseMessage(msg) {
 
 function handleNoClick() {
     noClickCount++
-    clickHistory.push("No") // ✅ thêm
 
     // Cycle through guilt-trip messages
     const msgIndex = Math.min(noClickCount, noMessages.length - 1)
@@ -155,20 +142,4 @@ function runAway() {
     noBtn.style.left = `${randomX}px`
     noBtn.style.top = `${randomY}px`
     noBtn.style.zIndex = '50'
-}
-
-function sendEmailReport() {
-    // 🔧 THAY bằng của bạn trong EmailJS
-    const SERVICE_ID = "YOUR_SERVICE_ID"
-    const TEMPLATE_ID = "YOUR_TEMPLATE_ID"
-
-    const params = {
-        no_clicks: noClickCount,
-        yes_teases: yesTeasedCount,
-        history: clickHistory.join(" → "),
-        time: new Date().toLocaleString(),
-        user_agent: navigator.userAgent
-    }
-
-    return emailjs.send(SERVICE_ID, TEMPLATE_ID, params)
 }
